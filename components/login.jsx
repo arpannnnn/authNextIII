@@ -2,16 +2,24 @@
 import React, { useRef } from 'react'
 import { signIn } from "next-auth/react"
 import Link from 'next/link';
-
+import { useRouter } from 'next/navigation';
 export default function CustomLogin() {
     const emailRef = useRef("");
     const passRef = useRef("");
+    const router = useRouter();
 
     const handleLogin = async (event) => {
         event.preventDefault();
-        const res = await signIn("credentials", {email: emailRef.current.value, password: passRef.current.value, redirect: false, callbackUrl: "http://localhost:3000"});
-        console.log(res);
-        
+        signIn("credentials", { email: emailRef.current.value, password: passRef.current.value, redirect: false }).then(res => {
+            if (res.error == null) {
+                router.push('/')
+            }
+            else {
+                alert(`${res.error}`)
+            }
+        });
+    
+
     }
     return (
         <div>

@@ -1,7 +1,7 @@
 import CredentialsProvider from "next-auth/providers/credentials"
 import NextAuth from "next-auth"
 import { users } from "../../../../../components/users";
-import { signIn } from "next-auth/react";
+import { signIn, signOut } from "next-auth/react";
 export const authOptions = {
     providers: [
         CredentialsProvider({
@@ -11,8 +11,8 @@ export const authOptions = {
                 password: { label: "Password", type: "password" }
             },
             async authorize(credentials, req) {
-                if(!credentials || !credentials?.email ||!credentials?.password)
-                return null;
+                if (!credentials || !credentials?.email || !credentials?.password)
+                    return null;
                 const user = users.find((u) => u.email === credentials?.email);
                 if (user?.password === credentials?.password) {
                     return user
@@ -21,9 +21,11 @@ export const authOptions = {
             }
         })
     ],
-    pages:{
-        signIn:'/login'
-    }
+    pages: {
+        signIn: '/login',
+        
+    },
+    Secret: process.env.NextAuth_SECRET
 }
 const handler = NextAuth(authOptions)
 export { handler as GET, handler as POST }

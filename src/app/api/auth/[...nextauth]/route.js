@@ -1,7 +1,5 @@
 import CredentialsProvider from "next-auth/providers/credentials"
 import NextAuth from "next-auth"
-import { users } from "../../../../../components/users";
-import { signIn, signOut } from "next-auth/react";
 export const authOptions = {
     providers: [
         CredentialsProvider({
@@ -12,12 +10,30 @@ export const authOptions = {
             },
             async authorize(credentials, req) {
                 if (!credentials || !credentials?.email || !credentials?.password)
-                    return null;
-                const user = users.find((u) => u.email === credentials?.email);
-                if (user?.password === credentials?.password) {
+                    throw new Error('Email or password is invalid');
+                //const user = users.find((u) => u.email === credentials?.email);
+                const formData={
+                    email:credentials.email,
+                    password:credentials.password
+                }
+                const payload={
+                    method:'POST',
+                    headers:{
+                        'Accept':'application/json',
+                        'Content-Type':'application/json'
+                    },
+                    body:JSON.stringify(formData)
+
+                }
+                const res= await fetch('http://localhost:3000/api/auth/login',payload);
+                const resJson= await res.json();
+                const user=resJson.data;
+                if (user?.email === credentials?.email) {
                     return user
                 }
-                return null
+                else{
+                    throw new Error('Invalis Credientials')
+                }
             }
         })
     ],

@@ -1,7 +1,9 @@
 import React from 'react'
-
-export default function RegisterPage() {
+import CustomRegister from '../../../components/register'
+export default function LoginPage() {
   return (
-    <div>RegisterPage</div>
+    <div> 
+      <CustomRegister/>
+  </div>
   )
 }

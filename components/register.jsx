@@ -1,6 +1,40 @@
+'use client'
 import React from 'react'
+import { useRef } from 'react'
 
 export default function CustomRegister() {
+    const emailRef = useRef("");
+    const passRef = useRef("");
+    const confirmPassRef = useRef()
+
+    const handleRegister = async (event) => {
+        event.preventDefault();
+        try{
+        if (emailRef.current.length === 0) return alert('email is empty')
+        if (passRef.current.length < 6) return alert('Password mustnot be less than 6 characters ')
+        const payload = {
+            email: emailRef.current,
+            password: passRef.current,
+        }
+        const formData = {
+            method: 'POST',
+            headers: {
+                'Accept': 'application/json',
+                'content-Type': 'application/json'
+            },
+            body: JSON.stringify(payload)
+        }
+
+
+
+
+        const res = await fetch("http://localhost:3000/api/auth/register", formData)
+        const resJson = await res.json();
+        alert(`${resJson.message}`)
+    }catch(error){
+        alert(`${error}`)
+    }
+    }
     return (
         <section>
             <div class="grid grid-cols-1 lg:grid-cols-2">
@@ -21,7 +55,7 @@ export default function CustomRegister() {
                                         Email address{" "}
                                     </label>
                                     <div class="mt-2">
-                                        <input
+                                        <input onChange={(event) => emailRef.current = event.target.value}
                                             class="flex h-10 w-full rounded-md border border-gray-300 bg-transparent px-3 py-2 text-sm placeholder:text-gray-400 focus:outline-none focus:ring-1 focus:ring-gray-400 focus:ring-offset-1 disabled:cursor-not-allowed disabled:opacity-50"
                                             type="email"
                                             placeholder="Email"
@@ -37,7 +71,7 @@ export default function CustomRegister() {
 
                                     </div>
                                     <div class="mt-2">
-                                        <input
+                                        <input onChange={(event) => passRef.current = event.target.value}
                                             class="flex h-10 w-full rounded-md border border-gray-300 bg-transparent px-3 py-2 text-sm placeholder:text-gray-400 focus:outline-none focus:ring-1 focus:ring-gray-400 focus:ring-offset-1 disabled:cursor-not-allowed disabled:opacity-50"
                                             type="password"
                                             placeholder="Password"
@@ -53,7 +87,7 @@ export default function CustomRegister() {
 
                                     </div>
                                     <div class="mt-2">
-                                        <input
+                                        <input onChange={(event) => confirmPassRef.current = event.target.value}
                                             class="flex h-10 w-full rounded-md border border-gray-300 bg-transparent px-3 py-2 text-sm placeholder:text-gray-400 focus:outline-none focus:ring-1 focus:ring-gray-400 focus:ring-offset-1 disabled:cursor-not-allowed disabled:opacity-50"
                                             type="password"
                                             placeholder="Password"
@@ -61,7 +95,7 @@ export default function CustomRegister() {
                                     </div>
                                 </div>
                                 <div>
-                                    <button
+                                    <button onClick={(event) => handleRegister(event)}
                                         type="button"
                                         class="inline-flex w-full items-center justify-center rounded-md bg-black px-3.5 py-2.5 font-semibold leading-7 text-white hover:bg-black/80"
                                     >

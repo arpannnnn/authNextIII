@@ -1,17 +1,19 @@
 'use client'
 import React from 'react'
 import { useRef } from 'react'
-
+import { useRouter } from 'next/navigation';
 export default function CustomRegister() {
     const emailRef = useRef("");
     const passRef = useRef("");
     const confirmPassRef = useRef()
+    const router=useRouter()
 
     const handleRegister = async (event) => {
         event.preventDefault();
         try{
         if (emailRef.current.length === 0) return alert('email is empty')
         if (passRef.current.length < 6) return alert('Password mustnot be less than 6 characters ')
+            if(passRef.current!=confirmPassRef.current) return alert('password must be same ')
         const payload = {
             email: emailRef.current,
             password: passRef.current,
@@ -31,6 +33,7 @@ export default function CustomRegister() {
         const res = await fetch("http://localhost:3000/api/auth/register", formData)
         const resJson = await res.json();
         alert(`${resJson.message}`)
+        router.push('/login')
     }catch(error){
         alert(`${error}`)
     }

@@ -4,6 +4,7 @@ import "./globals.css";
 import { SessionProvider } from "next-auth/react";
 import CustomNavbar from "../../components/navbar";
 import { authOptions } from "./api/auth/[...nextauth]/route";
+import AuthProvider from "../../components/auth/AuthProvider";
 
 const inter = Inter({ subsets: ["latin"] });
 
@@ -13,11 +14,11 @@ export default function RootLayout({ children }) {
   return (
     <html lang="en">
       <body className={inter.className}>
-        <SessionProvider session={authOptions}>
+        <AuthProvider>
           <CustomNavbar />
 
           {children}
-        </SessionProvider>
+        </AuthProvider>
 
       </body>
 

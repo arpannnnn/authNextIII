@@ -1,7 +1,21 @@
-import CredentialsProvider from "next-auth/providers/credentials"
-import NextAuth from "next-auth"
+import CredentialsProvider from "next-auth/providers/credentials";
+import GoogleProvider from "next-auth/providers/google";
+import { FirestoreAdapter } from "@auth/firebase-adapter";
+import { cert } from "firebase-admin/app";
+import NextAuth from "next-auth";
 export const authOptions = {
+    adapter: FirestoreAdapter({
+        credential: cert({
+          projectId: process.env.AUTH_FIREBASE_PROJECT_ID,
+          clientEmail: process.env.AUTH_FIREBASE_CLIENT_EMAIL,
+          privateKey: process.env.AUTH_FIREBASE_PRIVATE_KEY,
+        }),
+    }),
     providers: [
+        GoogleProvider({
+            clientId: process.env.GOOGLE_CLIENT_ID,
+            clientSecret: process.env.GOOGLE_CLIENT_SECRET
+        }),
         CredentialsProvider({
             name: 'Acer Account',
             credentials: {
@@ -58,18 +72,22 @@ export const authOptions = {
             return baseUrl
         },
         async session({ session, user, token }) {
-            console.log("session", { session, user, token })
-            if(token?.user){
-                session.user=token?.user
+            const newSession=session;
+            if (token?.user) {
+                session.user = token?.user;
+                newSession.user=token.user;
+                newSession.accessToken=token.accessToken;
 
             }
 
             return session
         },
         async jwt({ token, user, account, profile, isNewUser }) {
-            console.log("jwt", { token, user, account, profile, isNewUser })
-            if(user){
-                token.user=user;
+            const newToken = token;
+
+            if (user) {
+                token.user = user;
+                newToken.accessToken = account?.access_token;
             }
             return token
         }
